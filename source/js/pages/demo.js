@@ -367,6 +367,19 @@ const tooltips = `
 </container>
 `;
 
+///// x-share
+const shareBtn = `
+<container class="test">
+
+  <row><h1>Share Button (x-share)</h1></row>
+  <row class="g-1">
+    <column><x-share container=".test"></x-share></column>
+  </row>
+
+</container>
+`;
+
+
 ///// Page Scoped Data Holder
 // Must Be Set/Change The Value Inside The before(), content() or after()
 window.pageData = "No Effect Here";
@@ -394,6 +407,7 @@ export default function content(){
     ${situationalColors}
     ${themedBoxes}
     ${tooltips}
+    ${shareBtn}
     <br>
   `;
 

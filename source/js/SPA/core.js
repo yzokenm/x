@@ -8,6 +8,7 @@ import bridge from "../modules/bridge.js";
 import Toast from "./elements/toast.js";
 import Tooltip from "./elements/tooltip.js";
 import El from "./elements/el.js";
+import ShareBtn from "./elements/ShareBtn.js";
 // import Form from "./elements/form.js";
 
 // import CSS from "./css.js";
