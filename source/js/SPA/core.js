@@ -77,8 +77,6 @@ export default class Core{
 
     Router.handle();
 
-    Loading.done();
-
   }
 
   static #onLoad(){
@@ -93,8 +91,6 @@ export default class Core{
       Router.handle();
 
       Menu.setActive();
-
-      Loading.done();
 
     });
   }
