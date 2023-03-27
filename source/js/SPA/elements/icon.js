@@ -1,14 +1,6 @@
-// <!-- HTML code -->
-// <i class="search-icon"></i>
-//
-// <!-- CSS code -->
-// .search-icon {
-//   display: inline-block;
-//   width: 24px;
-//   height: 24px;
-//   background-image: url('search-icon.svg');
-//   background-size: cover;
-// }
+// <x-icon>yzoken</x-icon>
+// SVG shadow
+// filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.5));
 
 "use strict";
 
@@ -16,9 +8,7 @@ export default class Icon extends HTMLElement{
   static #template = document.createElement("template");
 
   static {
-    El.#template.innerHTML = `
-      <icon></icon>
-    `;
+    Icon.#template.innerHTML = `<icon></icon>`;
   }
 
   constructor(){
@@ -27,22 +17,59 @@ export default class Icon extends HTMLElement{
     // Closed
     this.shadow = this.attachShadow({mode: 'closed'});
 
+    CSS: {
+      const style = document.createElement('style');
+      style.textContent = `
+        icon{
+          cursor: pointer;
+        }
+        icon > svg{
+          width: 100%;
+          height: 100%;
+
+          filter: brightness(100%);
+
+          transition: 100ms ease-in-out;
+          transition-property: transform, filter;
+
+        }
+      `;
+      this.shadow.appendChild(style);
+    }
+
     // Clone And Append Template
     this.shadow.appendChild(Icon.#template.content.cloneNode(true));
 
-    Content: {
-      // this.textContent;
+
+    // SVG
+    this.shadow.querySelector("icon").innerHTML = window.SVG.use(this.textContent);
+
+    this.svg = this.shadow.querySelector("icon>svg");
+
+    Events: {
+      // Hover In
+      this.addEventListener("mouseover", ()=>{
+        this.svg.style.filter = "brightness(90%)";
+        this.svg.style.transform = "scale(1.1)";
+      });
+
+      // Hover Out
+      this.addEventListener("mouseout", ()=>{
+        this.svg.style.filter = "brightness(100%)";
+        this.svg.style.transform = "scale(1)";
+      });
+
+      // Down
+      this.addEventListener("mousedown", ()=>{
+        this.svg.style.transform = "scale(0.5)";
+      });
+
+      // Up
+      this.addEventListener("mouseup", ()=>{
+        this.svg.style.transform = "scale(1)";
+      });
+
     }
-
-    // CSS: {
-    //   style.textContent = `
-    //     icon{}
-    //   `;
-    //   this.shadow.appendChild(style);
-    // }
-
-    // Clone And Append Template
-    this.shadow.appendChild(Toast.#template.content.cloneNode(true));
 
   }
 

@@ -4,14 +4,6 @@
 ///////////////////////////// Brideg / Fetch
 import bridge from "../modules/bridge.js";
 
-//// Custom Elements
-import Icon from "./elements/icon.js";
-import Toast from "./elements/toast.js";
-import Tooltip from "./elements/tooltip.js";
-import El from "./elements/el.js";
-import ShareBtn from "./elements/ShareBtn.js";
-// import Form from "./elements/form.js";
-
 // import CSS from "./css.js";
 // document.head.innerHTML += `<style>${CSS}</style>`;
 
@@ -19,6 +11,7 @@ import ShareBtn from "./elements/ShareBtn.js";
 import Language from "./language.js";
 
 import Title from "./title.js";
+import SVG from "./svg.js";
 
 import Header from "./header.js";
 import Main from "./main.js";
@@ -35,12 +28,21 @@ import Menu from "./menu.js";
 
 import Form from "./form.js";
 
+//// Custom Elements
+import Icon from "./elements/icon.js";
+import Copy from "./elements/copy.js";
+import Share from "./elements/share.js";
+import Toast from "./elements/toast.js";
+import Tooltip from "./elements/tooltip.js";
+import El from "./elements/el.js";
+// import Form from "./elements/form.js";
+
 export default class Core{
 
   // Class Static Initialization Block
   static {
-    // Try To Load Global Data Then Init The Methods
-    Core.#getGlobalData()
+    // Try To Get Initial Data Then Init The Methods
+    Core.#getInitialData()
     .then(()=>{
       Core.#firstLoad();
       Core.#onLoad();
@@ -54,9 +56,9 @@ export default class Core{
 
   }
 
-  /////// Global Data
-  static async #getGlobalData(){
-      let response = await window.bridge("api", {for:"globalData"}, "application/json");
+  /////// Initial Data
+  static async #getInitialData(){
+      let response = await window.bridge("api", {for:"initialData"});
 
       // console.log(response);
 
@@ -67,6 +69,9 @@ export default class Core{
       window.USER_TYPES = response["USER_TYPES"];
       // window.languages = response["languages"];
       // window.currencies = response["currencies"];
+
+      // Load External SVGs To SVG Class
+      window.SVG.set(response["EXTERNAL_SVG"]);
   }
 
   /////// Event Handlers

@@ -2,7 +2,7 @@
 
 export default class Menu{
   static selector = "body > menu";
-  static #selectorMenuButton = "body > header > svg[for=menu]";
+  static #selectorMenuButton = "body > header > x-icon[for=menu]";
   static #selectorHyperlinks = `${Menu.selector} > * > a`;
 
   static #elementMenuHamburgerButton = null;
@@ -53,7 +53,7 @@ export default class Menu{
         // Hyperlink Blue Print
         hyperlinks += `
   <a href="/${menu["name"]}">
-    <svg><use href="#${"logo" in menu ? menu["logo"] : menu["name"] }"></use></svg>
+    <x-icon>${"logo" in menu ? menu["logo"] : menu["name"]}</x-icon>
     ${window.Lang.use(menu["name"])}
   </a>
         `;
@@ -85,7 +85,7 @@ export default class Menu{
 
   /////////////////// toggleAlwaysOpenMode
   static #toggleAlwaysOpenMode(){
-    const toggler = document.querySelector(`${Menu.selector} > header > svg[for=toggleAlwaysOpenMode]`);
+    const toggler = document.querySelector(`${Menu.selector} > header > div[for=toggleAlwaysOpenMode]`);
 
     const header = document.querySelector(window.Header.selector);
     const main = document.querySelector(window.Main.selector);
@@ -103,7 +103,7 @@ export default class Menu{
         Menu.#elementMenuHamburgerButton.style.visibility = "visible";
 
         // Change The Lock Logo To Open
-        toggler.querySelector("svg > use").setAttribute("href", "#lockOpen")
+        toggler.innerHTML = "<x-icon>lockOpen</x-icon>";
 
         // Header, Main, Footer Maximize
         header.removeAttribute("style");
@@ -120,7 +120,7 @@ export default class Menu{
         Menu.#elementMenuHamburgerButton.style.visibility = "hidden";
 
         // Change The Lock Logo To Locked
-        toggler.querySelector("svg > use").setAttribute("href", "#lockLocked")
+        toggler.innerHTML = "<x-icon>lockLocked</x-icon>";
 
         // Get Calculated Meni Width
         const menuWidth = Menu.#elementMenu.offsetWidth + "px";
