@@ -398,7 +398,8 @@ const share = `
   <row><h1>Share (x-share)</h1></row>
 
   <row class="box-default w-25 p-5" class="g-1">
-    <column><x-share></x-share></column>
+    <column><x-share selector="#dataToBeShared"></x-share></column>
+    <column id="dataToBeShared">Share me!</column>
   </row>
 
 </container>
@@ -425,7 +426,7 @@ export const TITLE = window.Lang.use("demo");
 export default function content(){
   let dom = `
     ${form}
-    ${table}
+    ${table}git config --global user.name "Your Name"
     ${classBCcolorSurfaceX}
     ${colorTextX}
     ${situationalColors}
