@@ -89,7 +89,7 @@ export default class Share extends HTMLElement{
               <x-icon>telegram_original</x-icon>
             </a>
 
-            <a href="https://www.reddit.com/submit?selftext=${shareData.text}&title=${shareData.title}&url=${shareData.url}" target="_blank">
+            <a href="https://www.reddit.com/submit?selftext=${encodeURIComponent(shareData.text)}&title=${encodeURIComponent(shareData.title)}&url=${encodeURIComponent(shareData.url)}" target="_blank">
               <x-icon>reddit_original</x-icon>
             </a>
 
