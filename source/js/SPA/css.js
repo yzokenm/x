@@ -400,7 +400,7 @@ export default class CSS{
       }
 
       body > menu{
-        --menu-background-color: hsla(${CSS.values.color.science.hue}, 5%, 20%, 1);
+        --menu-background-color: hsla(${CSS.values.color.science.hue}deg, 5%, 20%, 1);
         background-color: var(--menu-background-color);
         height: 100vh;
         width: auto;
