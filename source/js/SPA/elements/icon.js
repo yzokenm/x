@@ -22,6 +22,7 @@ export default class Icon extends HTMLElement{
       style.textContent = `
         icon{
           cursor: pointer;
+          user-select: none;
         }
         icon > svg{
           width: 100%;
@@ -70,29 +71,32 @@ export default class Icon extends HTMLElement{
       // Up
       this.addEventListener("mouseup", ()=>{
         this.svg.style.transform = "scale(1)";
+
+        this.#toggle();
       });
 
       // Click
-      this.addEventListener("click", ()=>{
-        this.#toggle();
-
-      });
+      // this.addEventListener("click", ()=>{
+      //   this.#toggle();
+      //
+      // });
 
     }
 
   }
 
-  // Beta: Icon Toggler
   #toggle(){
-    // toggle="arrow_up"
-
     const toggleToIcon = this.getAttribute("toggle");
     if(!!toggleToIcon === false) return;
 
+    // Toggle
     if(this.currentIcon === this.textContent) this.currentIcon = toggleToIcon;
     else this.currentIcon = this.textContent;
 
     this.shadow.querySelector("icon").innerHTML = window.SVG.use(this.currentIcon);
+
+    // Update The this.svg Selector
+    this.svg = this.shadow.querySelector("icon>svg");
 
   }
 
