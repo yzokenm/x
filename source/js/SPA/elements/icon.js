@@ -43,8 +43,9 @@ export default class Icon extends HTMLElement{
     this.shadow.appendChild(Icon.#template.content.cloneNode(true));
 
 
-    // SVG
-    this.shadow.querySelector("icon").innerHTML = window.SVG.use(this.textContent);
+    // Initial SVG
+    this.currentIcon = this.textContent;
+    this.shadow.querySelector("icon").innerHTML = window.SVG.use(this.currentIcon);
 
     this.svg = this.shadow.querySelector("icon>svg");
 
@@ -71,7 +72,27 @@ export default class Icon extends HTMLElement{
         this.svg.style.transform = "scale(1)";
       });
 
+      // Click
+      this.addEventListener("click", ()=>{
+        this.#toggle();
+
+      });
+
     }
+
+  }
+
+  // Beta: Icon Toggler
+  #toggle(){
+    // toggle="arrow_up"
+
+    const toggleToIcon = this.getAttribute("toggle");
+    if(!!toggleToIcon === false) return;
+
+    if(this.currentIcon === this.textContent) this.currentIcon = toggleToIcon;
+    else this.currentIcon = this.textContent;
+
+    this.shadow.querySelector("icon").innerHTML = window.SVG.use(this.currentIcon);
 
   }
 
