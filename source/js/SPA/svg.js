@@ -57,6 +57,12 @@ export default class SVG{
   static #close = `</svg>`
 
   static use(name){
+    // Build And Return
+    return SVG.#open + SVG.raw(name) + SVG.#close;
+
+  }
+
+  static raw(name){
     // Keeps SVG Body
     let body = "";
 
@@ -69,8 +75,7 @@ export default class SVG{
     // Fallback SVG
     else body = SVG.#all["block_circle"];
 
-    // Build And Return
-    return SVG.#open + body + SVG.#close;
+    return body;
 
   }
 

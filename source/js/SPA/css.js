@@ -439,6 +439,7 @@ export default class CSS{
         width: 30px;
         height: 30px;
       }
+
       body > menu > main{
         width: 100%;
         padding: calc(${CSS.values.padding.default} * 2);
@@ -448,13 +449,24 @@ export default class CSS{
         gap: calc(${CSS.values.gap.default} / 2);
 
       }
-      body > menu > main > a{
-        /* background-color: var(--menu-background-color); */
 
-        /* filter: brightness(70%); */
+      body > menu > main > section[for=menu]{
+        display: grid;
+        grid-template-columns: 2fr auto;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+          "hyperlink sumbenuToggleIcon"
+          "submenu submenu";
+        gap: ${CSS.values.gap.default};
+
+      }
+      body > menu > main > section[for=menu] > a{
+        width: 100%;
 
         color: white;
         font-size: 2rem;
+
+        grid-area: hyperlink;
 
         display: flex;
         justify-content: flex-start;
@@ -469,19 +481,74 @@ export default class CSS{
         transition-property: filter, background-color, border;
 
       }
-      body > menu > main > a:where([active], :hover){
+      body > menu > main > section[for=menu] > a:where([active], :hover),
+      body > menu > main > section[for=menu] > section[for=submenu] > a:where([active], :hover){
         background-color: var(--menu-background-color);
         filter: brightness(120%);
 
       }
-      body > menu > main > a:where([active]){
+      body > menu > main > section[for=menu] > a:where([active]){
         border: 1px solid white;
 
       }
-      body > menu > main > a > x-icon{
+      body > menu > main > section[for=menu] > a > x-icon{
         height: 40px;
         width: 40px;
 
+      }
+      body > menu > main > section[for=menu] > a > span{
+        width: 100%;
+
+      }
+
+      body > menu > main > section[for=menu] > x-icon[for=submenusToggler]{
+        grid-area: sumbenuToggleIcon;
+
+        height: 40px;
+        width: 40px;
+      }
+
+      body > menu > main > section[for=menu] > section[for=submenu]{
+        grid-area: submenu;
+
+        overflow: hidden;
+        height: auto;
+        max-height: 0px;
+
+        transition: ${CSS.values.transition.velocity} ease-in-out;
+        transition-property: max-height;
+
+      }
+      body > menu > main > section[for=menu] > section[for=submenu].show{
+        max-height: 80vh;
+
+
+      }
+
+
+      body > menu > main > section[for=menu] > section[for=submenu] > a{
+        color: white;
+        font-size: 1.5rem;
+
+        display: flex;
+        justify-content: flex-start;
+        align-items: left;
+        gap: ${CSS.values.gap.default};
+
+        border: 1px solid transparent;
+        border-radius: ${CSS.values.radius.default};
+        padding: ${CSS.values.padding.default} calc(${CSS.values.padding.default} * 6);
+
+        transition: ${CSS.values.transition.velocity} ease-in-out;
+        transition-property: filter, background-color, border;
+
+      }
+      body > menu > main > section[for=submenu] > a > span{
+        width: 100%;
+      }
+      body > menu > main > section[for=submenu] > a > x-icon{
+        height: 30px;
+        width: 30px;
       }
 
       body > menu > footer{}

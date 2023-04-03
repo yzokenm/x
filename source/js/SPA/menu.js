@@ -3,7 +3,8 @@
 export default class Menu{
   static selector = "body > menu";
   static #selectorMenuButton = "body > header > x-icon[for=menu]";
-  static #selectorHyperlinks = `${Menu.selector} > * > a`;
+  static #selectorHyperlinks = `${Menu.selector} > * > section[for=menu] > a`;
+  static #hyperlinks = null;
 
   static #elementMenuHamburgerButton = null;
   static #elementMenu = null;
@@ -44,39 +45,101 @@ export default class Menu{
     if(window.CONF["menu"]["enabled"] === false) return false;
 
 
-    let hyperlinks = "";
-
-    for(const menu of window.CONF["menu"]["menus"])
-      if(Menu.#menuGuard(menu["name"]) === true)
-
-        // Hyperlink Blue Print
-        hyperlinks += `
-  <a href="${window.CONF["pages"][menu["name"]]["aliases"][0]}">
-    <x-icon color="#ffffff">${"logo" in menu ? menu["logo"] : menu["name"]}</x-icon>
-    ${window.Lang.use(menu["name"])}
-  </a>
-        `;
+    // Creates DOM For Menu And Submenus
+    Menu.buildMenu();
 
 
     // Add Hyperlinks Into Menu > Main
     Menu.#elementMenu.querySelector("main").innerHTML = hyperlinks;
 
+    // Gather All Hyperlinks To Use Later
+    // Update When Re-Build
+    Menu.#hyperlinks = document.querySelectorAll(Menu.#selectorHyperlinks);
+
     // After Adding Hyperlinks To Dom Create Hide Event For Each Of The Hyperlinks
+    // Update When Re-Build
     Menu.#onClickHyperlinksHide();
+
+    // Toggle Submenus
+    // Update When Re-Build
+    Menu.#onClickArrowToggleSubmenu();
+
+  }
+
+  static buildMenu(){
+    let hyperlinks = "";
+
+    for(const menu of window.CONF["menu"]["menus"])
+      if(Menu.#menuGuard(menu["name"]) === true){
+
+
+
+        // Hyperlink Blue Print
+        hyperlinks += `
+          <section for="menu">
+            <a href="${window.CONF["pages"][menu["name"]]["aliases"][0]}">
+              <x-icon color="#ffffff">${"logo" in menu ? menu["logo"] : menu["name"]}</x-icon>
+              <span>${window.Lang.use(menu["name"])}</span>
+            </a>
+            ${Menu.buildSubmenu(menu)}
+          </section>
+        `;
+
+      }
+  }
+
+  static buildSubmenu(menu){
+    //// Submenus
+    let submenuContainer = "";
+
+    // Check If Submenus Exists
+    if("submenu" in menu){
+
+      // Open Container
+      submenuContainer = `
+        <x-icon for="submenusToggler" color="#ffffff">arrow_down</x-icon>
+        <section for="submenu">
+      `;
+
+      // Loop Through Submenus
+      for(const submenu of menu["submenu"])
+
+        // Check If Submenu Passes The Guard Tests
+        if(Menu.#menuGuard(submenu["name"]) === true)
+          submenuContainer += `
+            <a href="${window.CONF["pages"][submenu["name"]]["aliases"][0]}">
+              <x-icon color="#ffffff">${"logo" in submenu ? submenu["logo"] : submenu["name"]}</x-icon>
+              <span>${window.Lang.use(submenu["name"])}</span>
+            </a>
+          `;
+
+        // Close Container
+        submenuContainer += "</section>";
+
+    }
+
+    return submenuContainer;
 
   }
 
   /////////////////// On Click Events
   // Active
   static setActive(){
-    document.querySelectorAll(Menu.#selectorHyperlinks).forEach((a) => {
-      a.removeAttribute("active");
+    for(const hyperlink of Menu.#hyperlinks){
 
-      if(a.getAttribute("href") == window.location.pathname) a.setAttribute("active", "");
+      // Remove Actives
+      hyperlink.removeAttribute("active");
+
+      // IF Hyperlink Href Equals To Current Pathname Then Set As Active
+      if(hyperlink.getAttribute("href") == window.location.pathname)
+        hyperlink.setAttribute("active", "");
+
+      // If Equals To One Of The Followings Set Home As Active
       else if(window.location.pathname == "/" || window.location.pathname == "" || window.location.pathname == "/home")
-        document.querySelector("body > menu > * > a:first-child").setAttribute("active", "");
+        document.querySelector(`${Menu.#selectorHyperlinks}:first-child`).setAttribute("active", "");
 
-    });
+    }
+
   }
 
   // On Click Menu Button Show The Menu
@@ -91,13 +154,23 @@ export default class Menu{
 
   // On Click Menu Anchors Hide The Menu
   static #onClickHyperlinksHide(){
-    document.querySelectorAll(Menu.#selectorHyperlinks).forEach((a) => {
-      a.addEventListener("click", Menu.#hide);
-    });
+    for(const hyperlink of Menu.#hyperlinks) hyperlink.addEventListener("click", Menu.#hide);
+
+  }
+
+  // On Click Arrow For Submenu Toggle Submenu
+  static #onClickArrowToggleSubmenu(){
+    for(const hyperlink of Menu.#hyperlinks){
+      const submenusTogglerContainer = hyperlink.parentNode.querySelector("x-icon[for=submenusToggler]");
+      if(!!submenusTogglerContainer === true)
+        submenusTogglerContainer.addEventListener("click", ()=>{
+          hyperlink.parentNode.querySelector("section[for=submenu]").classList.toggle("show");
+        });
+    }
   }
 
   /////////////////// Tools
-  // Show
+  // Show Menu
   static #show(){
     // Check If Already Shown
     if(Menu.#shown) return;
@@ -112,7 +185,7 @@ export default class Menu{
 
   }
 
-  // Hide
+  // Hide Menu
   static #hide(){
     // Check If Already Hidden
     if(!Menu.#shown) return;
@@ -130,7 +203,7 @@ export default class Menu{
 
   }
 
-  // toggleAlwaysOpenMode
+  // toggleAlwaysOpenMode Menu
   static #toggleAlwaysOpenMode(){
     const toggler = document.querySelector(`${Menu.selector} > header > div[for=toggleAlwaysOpenMode]`);
 
@@ -184,6 +257,7 @@ export default class Menu{
 
   }
 
+  // Switcher Color Mode
   static #colorModeSwitcher(){
     const switcher = document.querySelector(`${Menu.selector} > header > div[for=colorModeSwitcher]`);
 
