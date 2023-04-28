@@ -6,6 +6,7 @@
 export default class Toast extends HTMLElement{
   static #selector = "body>toasts";
   static #autoDismissTimer = 5000;
+  // static #startTime = Date.now();
   static #template = document.createElement("template");
 
   static {
@@ -27,7 +28,6 @@ export default class Toast extends HTMLElement{
 
     // this.attachShadow({mode: 'open'});
     this.shadow = this.attachShadow({mode: 'closed'});
-
     Type: {
       this.typeName = "warning";
       let attributeType = this.typeName;
@@ -64,6 +64,11 @@ export default class Toast extends HTMLElement{
           animation: fadeIn var(--transition-velocity) ease;
 
         }
+
+        toast:hover{
+          cursor: grab;
+        } 
+
         @keyframes fadeIn{
           0%{transform:translateY(-10px);}
           100%{transform:translateY(0px);}
@@ -151,17 +156,44 @@ export default class Toast extends HTMLElement{
     // Remove Toast On Click Dismiss
     // dismiss.onclick = ()=> this.remove(); // Bug w/ N sec removal
     this.shadow.querySelector("toast>dismiss").onclick = ()=> this.style.display = "none";
-
+    
   }
-
+  
   static new(type, content){
+    // Select The Toast
+    const toastSelector = document.querySelector(Toast.#selector);
+
     if(!!type === false || !!content === false) return;
 
+    toastSelector.innerHTML += `<x-toast type="${type}">${content}</x-toast>`;
+    
+    // Toast Show Start Time 
+    const startTime = Date.now()
+    let elapsedTime;
 
-    document.querySelector(Toast.#selector).innerHTML += `<x-toast type="${type}">${content}</x-toast>`;
+    // Set A Timeout To Hide The Toast After N Seconds
+    let timeoutId = setTimeout( ()=> {toastSelector.firstChild?.remove();}, Toast.#autoDismissTimer);
+    
+    // Adding Event Listener For Mouseenter Event
+    toastSelector.onmouseenter =()=> {
+      
+      // Clear the timeout to prevent the toast from hiding
+      clearTimeout(timeoutId);
 
-    // Auto Remove After N Seconds
-    setTimeout(()=>{document.querySelector(Toast.#selector).firstChild?.remove();}, Toast.#autoDismissTimer);
+      // Calculating amount of time that has passed between the commencement and the completion of an event.
+      elapsedTime = Date.now() - startTime;
+    };
+    
+    // Hiding The Toast When Mouse Leaves With Remaining Time
+    toastSelector.onmouseleave = ()=> {
+      const remainingTime = Math.max(Toast.#autoDismissTimer - elapsedTime, 0);
+      console.log("remainingTime",remainingTime);
+
+      setTimeout(() => {
+        toastSelector.firstChild?.remove();
+      }, remainingTime);
+      // toastSelector.style.display = "none";
+    };
 
   }
 }

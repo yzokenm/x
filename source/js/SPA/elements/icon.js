@@ -21,7 +21,7 @@ export default class Icon extends HTMLElement{
       const style = document.createElement('style');
       style.textContent = `
         icon{
-          cursor: ${this.parentElement.disabled === undefined ? 'pointer' : 'disabled'};
+          cursor: ${this.parentElement.disabled === undefined ? 'pointer' : 'not-allowed'};
 
           display: block;
 

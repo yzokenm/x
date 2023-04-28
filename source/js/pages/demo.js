@@ -424,6 +424,7 @@ const modal = `
 </container>
 `;
 
+
 ///// Page Scoped Data Holder
 // Must Be Set/Change The Value Inside The before(), content() or after()
 window.pageData = "No Effect Here";
@@ -439,7 +440,6 @@ export function before(){
 
 // Title
 export const TITLE = window.Lang.use("demo");
-
 ///// Content
 // Can Be Set Async
 export default function content(){
