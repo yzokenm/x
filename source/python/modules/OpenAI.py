@@ -6,7 +6,7 @@
 
 if __name__ != "__main__":
 
-    from main import CONF
+    from python.modules.Globals import Globals
 
     import openai
     import json
@@ -21,13 +21,13 @@ if __name__ != "__main__":
             temperature=0.1
         ):
             # Check If Feature Is Enabled
-            if "OpenAI" not in CONF: return False
+            if "OpenAI" not in Globals.CONF: return False
 
             # Check If prompt Is Valid
             if not prompt: return False
 
             try:
-                openai.api_key = CONF["OpenAI"]["api_key"]
+                openai.api_key = Globals.CONF["OpenAI"]["api_key"]
                 responseOpenAI = openai.Completion.create(
                   model="text-davinci-003",
                   prompt=prompt,
@@ -50,12 +50,13 @@ if __name__ != "__main__":
         @staticmethod
         def chatCompletion(
             model="gpt-3.5-turbo",
-            message=[],
+            message=False,
             max_tokens=1000,
-            temperature=0.1
+            temperature=0.1,
+            history={}
         ):
             # Check If Feature Is Enabled
-            if "OpenAI" not in CONF: return False
+            if "OpenAI" not in Globals.CONF: return False
 
             # Check If prompt Is Valid
             if not message: return False
@@ -68,20 +69,24 @@ if __name__ != "__main__":
                 # {"role": "user", "content": "Where was it played?"}
             ]
 
-            # Append User Message
+            # If Initial History Passed Then Add It To Chat History
+            if history: chatHistory.append(history)
+
+            # Append User Message To Chat History
             chatHistory.append({"role": "user", "content": message})
 
             try:
-                openai.api_key = CONF["OpenAI"]["api_key"]
+                openai.api_key = Globals.CONF["OpenAI"]["api_key"]
                 completion = openai.ChatCompletion.create(
                   model="gpt-3.5-turbo",
                   messages=chatHistory
                 )
 
-                print(completion)
-
-                # Append Assistant Message
+                # Append Assistant Message To Chat History
                 chatHistory.append({"role": "assistant", "content": completion["choices"][0]["message"]["content"]})
+
+                # print(completion)
+                # print(chatHistory)
 
                 return completion["choices"][0]["message"]["content"]
 

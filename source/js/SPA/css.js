@@ -1,3 +1,7 @@
+// OG Importing Way Of The CSS Files
+// <link rel="preload" href="{{url_for('static', filename='css/master.css')}}" as="style">
+// <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/master.css')}}">
+
 // const buttonStyles = `
 //   background-color: blue;
 //   color: white;
@@ -28,6 +32,8 @@ export default class CSS{
 
   // Values
   static values = {
+
+    document: {},
 
     font: {
       size: {
@@ -96,11 +102,7 @@ export default class CSS{
 
       cover: "rgba(0, 0, 0, 0.6)",
 
-      science: {
-        hue: 230,         // deg
-        saturation: 13,   // %
-        lightness: 9      // %
-      },
+      brand: {},
 
       text: {}
 
@@ -110,15 +112,21 @@ export default class CSS{
 
   };
 
-  // Init
-  static {
-    CSS.colorModeSwitcher();
+  // Rules
+  static rules = {};
 
-    CSS.#update();
+  //////////// APIs
+  ///// Init
+  static init(){
+    CSS.#calculateDocumentHeight();
+
+    CSS.#loadColorBrand();
+
+    CSS.colorModeSwitcher();
 
   }
 
-  //////////// APIs
+  ///// Color Mode Switcher
   static colorModeSwitcher(){
     switch(CSS.currentColorMode){
       case CSS.colorModes.DARK:
@@ -137,55 +145,86 @@ export default class CSS{
         // console.log("Default");
         CSS.#dark();
         CSS.currentColorMode = CSS.colorModes.DARK;
+
     }
 
+    // After Color Mode Selection Update The Rules
     CSS.#update();
 
   }
 
-  // Updates The CSS Rules
+  ///// Document Height
+  // Calculate Document Height
+  static #calculateDocumentHeight(){
+    // Set Document Height For THe First Time
+    CSS.#setDocumentHeight();
+
+    // Update Document Height On Resize
+    window.addEventListener("resize", CSS.#setDocumentHeight);
+
+  }
+
+  // Set Document Height
+  static #setDocumentHeight(){
+    // Set Document Height
+    CSS.values.document.height = `${window.innerHeight}px`;
+
+  }
+
+  ///// Load Brand Color From Configurations File
+  static #loadColorBrand(){
+    CSS.values.color.brand = {
+      hue: window.CONF.default.color.brand.hue || 230,
+      saturation: window.CONF.default.color.brand.saturation || 13,
+      lightness: window.CONF.default.color.brand.lightness || 9
+    }
+  }
+
+  ///// Updates The CSS Rules
   static #update(){
-    window.document.querySelector("style[for=INTERNAL_CSS]").innerText = `
+    CSS.rules.all = `
       ${CSS.common()}
       ${CSS.master()}
       ${CSS.styles()}
       ${CSS.layouts()}
     `;
+
+    window.document.querySelector("style[for=X_CSS]").innerText = CSS.rules.all;
   }
+
 
   //////////// Modes
   static #dark(){
     CSS.values.color.scheme = "dark";
 
     // The Color, Main Color, Brand Color
-    CSS.values.color.main =
-    CSS.values.color.brand = `
+    CSS.values.color.main = `
       hsla(
-        ${CSS.values.color.science.hue}deg,
-        ${CSS.values.color.science.saturation / 2}%,
-        ${CSS.values.color.science.lightness / 2}%, 1);
+        ${CSS.values.color.brand.hue}deg,
+        ${CSS.values.color.brand.saturation}%,
+        ${CSS.values.color.brand.lightness}%, 1);
     `;
 
     CSS.values.color.text = {
-      primary: `hsla(${CSS.values.color.science.hue}deg, 15%, 95%, 1)`,
-      secondary: `hsla(${CSS.values.color.science.hue}deg, 5%, 75%, 1)`,
-      accent: `hsla(${CSS.values.color.science.hue}deg, ${CSS.values.color.science.saturation}%, 5%, 1)`
+      primary: `hsla(${CSS.values.color.brand.hue}deg, 15%, 95%, 1)`,
+      secondary: `hsla(${CSS.values.color.brand.hue}deg, 5%, 75%, 1)`,
+      accent: `hsla(${CSS.values.color.brand.hue}deg, ${CSS.values.color.brand.saturation}%, 5%, 1)`
     };
 
     CSS.values.color.surface = {
-      "1": `hsla(${CSS.values.color.science.hue}deg, 10%, 10%, 1)`,
-      "2": `hsla(${CSS.values.color.science.hue}deg, 10%, 15%, 1)`,
-      "3": `hsla(${CSS.values.color.science.hue}deg, 10%, 20%, 1)`,
-      "4": `hsla(${CSS.values.color.science.hue}deg, 10%, 25%, 1)`,
-      "5": `hsla(${CSS.values.color.science.hue}deg, 10%, 30%, 1)`,
-      "6": `hsla(${CSS.values.color.science.hue}deg, 10%, 35%, 1)`,
-      "7": `hsla(${CSS.values.color.science.hue}deg, 10%, 50%, 1)`,
-      "8": `hsla(${CSS.values.color.science.hue}deg, 10%, 65%, 1)`,
-      "9": `hsla(${CSS.values.color.science.hue}deg, 10%, 80%, 1)`,
-      "10": `hsla(${CSS.values.color.science.hue}deg, 10%, 95%, 1)`,
+      "1": `hsla(${CSS.values.color.brand.hue}deg, 10%, 10%, 1)`,
+      "2": `hsla(${CSS.values.color.brand.hue}deg, 10%, 15%, 1)`,
+      "3": `hsla(${CSS.values.color.brand.hue}deg, 10%, 20%, 1)`,
+      "4": `hsla(${CSS.values.color.brand.hue}deg, 10%, 25%, 1)`,
+      "5": `hsla(${CSS.values.color.brand.hue}deg, 10%, 30%, 1)`,
+      "6": `hsla(${CSS.values.color.brand.hue}deg, 10%, 35%, 1)`,
+      "7": `hsla(${CSS.values.color.brand.hue}deg, 10%, 50%, 1)`,
+      "8": `hsla(${CSS.values.color.brand.hue}deg, 10%, 65%, 1)`,
+      "9": `hsla(${CSS.values.color.brand.hue}deg, 10%, 80%, 1)`,
+      "10": `hsla(${CSS.values.color.brand.hue}deg, 10%, 95%, 1)`,
     };
 
-    CSS.values.shadow.default = `0px 10px 10px -5px hsla(${CSS.values.color.science.hue}deg 50% 3% / 0.3)`;
+    CSS.values.shadow.default = `0px 10px 10px -5px hsla(${CSS.values.color.brand.hue}deg 50% 3% / 0.3)`;
 
   }
 
@@ -193,41 +232,40 @@ export default class CSS{
     CSS.values.color.scheme = "light";
 
     // The Color, Main Color, Brand Color
-    CSS.values.color.main =
-    CSS.values.color.brand = `
+    CSS.values.color.main = `
       hsla(
-        ${CSS.values.color.science.hue}deg,
-        ${CSS.values.color.science.saturation / 2}%,
-        ${CSS.values.color.science.lightness / 1.2}%, 1);
+        ${CSS.values.color.brand.hue}deg,
+        ${CSS.values.color.brand.saturation}%,
+        ${CSS.values.color.brand.lightness}%, 1);
     `;
 
 
     CSS.values.color.text = {
-      primary: `hsla(${CSS.values.color.science.hue}deg, ${CSS.values.color.science.saturation}%, 10%, 1)`,
-      secondary: `hsla(${CSS.values.color.science.hue}deg, 30%, 30%, 1)`,
-      accent: `hsla(${CSS.values.color.science.hue}deg, 15%, 95%, 1)`
+      primary: `hsla(${CSS.values.color.brand.hue}deg, ${CSS.values.color.brand.saturation}%, 10%, 1)`,
+      secondary: `hsla(${CSS.values.color.brand.hue}deg, 30%, 30%, 1)`,
+      accent: `hsla(${CSS.values.color.brand.hue}deg, 15%, 95%, 1)`
     };
 
     CSS.values.color.surface = {
-      "1": `hsla(${CSS.values.color.science.hue}, 20%, 100%, 1)`,
-      "2": `hsla(${CSS.values.color.science.hue}, 20%, 95%, 1)`,
-      "3": `hsla(${CSS.values.color.science.hue}, 20%, 90%, 1)`,
-      "4": `hsla(${CSS.values.color.science.hue}, 20%, 85%, 1)`,
-      "5": `hsla(${CSS.values.color.science.hue}, 20%, 80%, 1)`,
-      "6": `hsla(${CSS.values.color.science.hue}, 20%, 75%, 1)`,
-      "7": `hsla(${CSS.values.color.science.hue}, 20%, 60%, 1)`,
-      "8": `hsla(${CSS.values.color.science.hue}, 20%, 45%, 1)`,
-      "9": `hsla(${CSS.values.color.science.hue}, 20%, 30%, 1)`,
-      "10": `hsla(${CSS.values.color.science.hue}, 20%, 15%, 1)`,
+      "1": `hsla(${CSS.values.color.brand.hue}, 20%, 100%, 1)`,
+      "2": `hsla(${CSS.values.color.brand.hue}, 20%, 95%, 1)`,
+      "3": `hsla(${CSS.values.color.brand.hue}, 20%, 90%, 1)`,
+      "4": `hsla(${CSS.values.color.brand.hue}, 20%, 85%, 1)`,
+      "5": `hsla(${CSS.values.color.brand.hue}, 20%, 80%, 1)`,
+      "6": `hsla(${CSS.values.color.brand.hue}, 20%, 75%, 1)`,
+      "7": `hsla(${CSS.values.color.brand.hue}, 20%, 60%, 1)`,
+      "8": `hsla(${CSS.values.color.brand.hue}, 20%, 45%, 1)`,
+      "9": `hsla(${CSS.values.color.brand.hue}, 20%, 30%, 1)`,
+      "10": `hsla(${CSS.values.color.brand.hue}, 20%, 15%, 1)`,
     };
 
-    CSS.values.shadow.default = `0px 10px 10px -5px hsla(${CSS.values.color.science.hue}deg 10% 2% / 0.2)`;
+    CSS.values.shadow.default = `0px 10px 10px -5px hsla(${CSS.values.color.brand.hue}deg 10% 2% / 0.2)`;
 
   }
 
   //////////// CSS
   static common(){
-    const fonts = `
+    CSS.rules.fonts = `
       /*********************** FONTS START ***********************/
 
       @font-face{
@@ -235,17 +273,67 @@ export default class CSS{
         src:url("/fonts/Quicksand-Regular.ttf");
       }
 
+      @font-face{
+        font-family: AlegreyaSans;
+        src:url("/fonts/AlegreyaSans-Regular.ttf");
+      }
+
+      @font-face{
+        font-family: Cardo;
+        src:url("/fonts/Cardo-Regular.ttf");
+      }
+
+      @font-face{
+        font-family: Cinzel;
+        src:url("/fonts/Cinzel-Regular.ttf");
+      }
+
+      @font-face{
+        font-family: Eczar;
+        src:url("/fonts/Eczar-Regular.ttf");
+      }
+
+      @font-face{
+        font-family: Gruppo;
+        src:url("/fonts/Gruppo-Regular.ttf");
+      }
+
+      @font-face{
+        font-family: JosefinSans;
+        src:url("/fonts/JosefinSans-Regular.ttf");
+      }
+
+      @font-face{
+        font-family: JosefinSlab;
+        src:url("/fonts/JosefinSlab-Regular.ttf");
+      }
+
+      @font-face{
+        font-family: Macondo;
+        src:url("/fonts/Macondo-Regular.ttf");
+      }
+
+      @font-face{
+        font-family: Philosopher;
+        src:url("/fonts/Philosopher-Regular.ttf");
+      }
+
+      @font-face{
+        font-family: Marcellus;
+        src:url("/fonts/Marcellus-Regular.ttf");
+      }
+
       /*********************** FONTS END ***********************/
     `;
 
     return `
-      ${fonts}
+      ${CSS.rules.fonts}
     `;
 
   }
 
   static master(){
-    const all = `
+    CSS.rules.selectorsDefaults = `
       :root, html, body, *, *::before, *::after{
         margin: 0;
         padding: 0;
@@ -260,7 +348,7 @@ export default class CSS{
       }
     `;
 
-    const scrollbar = `
+    CSS.rules.scrollbar = `
       /* Removing Default Scroll Bar START */
       *{
         -ms-overflow-style: none;
@@ -272,11 +360,14 @@ export default class CSS{
       /* Removing Default Scroll Bar END */
     `;
 
-    const skeleton = `
+    CSS.rules.root = `
       :root{
+        font-size: 22px;
+
         color-scheme: ${CSS.values.color.scheme};
         accent-color: ${CSS.values.color.main};
 
+        --document-Height: ${CSS.values.document.height};
 
         --z-minus: ${CSS.values.zIndex.minus};
         --z-body: ${CSS.values.zIndex.body};
@@ -331,17 +422,21 @@ export default class CSS{
         --color-cover: ${CSS.values.color.cover};
 
       }
+    `;
 
+    CSS.rules.skeleton = `
       body {
-        background-color: ${CSS.values.color.surface["1"]};
-        color: ${CSS.values.color.text.primary};
+        background-color: var(--color-surface-1);
+        color: var(--color-text-primary);
         font-family: Quicksand;
-        font-size: 15px;
+        font-size: 1rem;
+        height: 100vh;
+        padding-top: var(--header-height);
 
       }
 
       body > loading{
-        background-color: ${CSS.values.color.surface["1"]};
+        background-color: var(--color-surface-1);
 
         width: 100vw;
         height: 100vh;
@@ -349,9 +444,9 @@ export default class CSS{
         position: fixed;
         left: 0px;
         top: 0px;
-        z-index: ${CSS.values.zIndex.loading};
+        z-index: var(--z-loading);
 
-        transition: ${CSS.values.transition.velocity} opacity ease-in-out;
+        transition: var(--transition-velocity) opacity ease-in-out;
 
       }
       body > loading::after{
@@ -361,7 +456,7 @@ export default class CSS{
         width: 20vh;
         border-radius: 100%;
         border: 0px solid transparent;
-        border-right: 2px solid ${CSS.values.color.text.primary};
+        border-right: 2px solid var(--color-text-primary);
 
         position: absolute;
         left: 50%;
@@ -369,7 +464,7 @@ export default class CSS{
         transform: translate(-50%, -50%);
         transform-origin: center;
 
-        animation: loading 500ms infinite ease-in-out;
+        animation: loading 1000ms infinite linear;
 
       }
       @keyframes loading{
@@ -382,26 +477,34 @@ export default class CSS{
         height: auto;
         max-height: 100vh;
         width: 400px;
-        /* padding: ${CSS.values.padding.default}; */
-        padding: 5px 5px 20px 5px;
+        padding: var(--padding);
+        padding-bottom: calc(var(--padding) * 4);
+
+        overflow-x: hidden;
         overflow-y: scroll;
 
         display: flex;
         flex-direction: column-reverse;
-        gap: ${CSS.values.gap.default};
-
-        /* pointer-events: none; */
+        gap: var(--gap);
 
         position: fixed;
         top: 0px;
         right: 0px;
-        z-index: ${CSS.values.zIndex.toasts};
+        z-index: var(--z-toasts);
 
+      }
+      body > toasts:empty{
+        padding: 0px;
       }
 
       body > menu{
+<<<<<<< HEAD
         --menu-background-color: hsla(${CSS.values.color.science.hue}deg, 5%, 20%, 1);
         background-color: var(--menu-background-color);
+=======
+        background-color: hsla(${CSS.values.color.brand.hue}, 10%, 25%, 0.1);
+        backdrop-filter: blur(100px);
+>>>>>>> main
         height: 100vh;
         width: auto;
 
@@ -410,14 +513,14 @@ export default class CSS{
         display: grid;
         grid-template-rows: auto 2fr auto;
         justify-items: start;
-        gap: ${CSS.values.gap.default};
+        gap: var(--gap);
 
         position: fixed;
-        z-index: ${CSS.values.zIndex.menu};
+        z-index: var(--z-menu);
         top: 0;
         left: 0;
         transform: translate(-100%, 0);
-        transition-duration: ${CSS.values.transition.velocity};
+        transition-duration: var(--transition-velocity);
         transition-timing-function: ease;
         transition-property: all;
 
@@ -426,7 +529,7 @@ export default class CSS{
       body > menu > header{
         width: 100%;
 
-        padding: calc(${CSS.values.padding.default} * 2);
+        padding: calc(var(--padding) * 2);
 
         display: flex;
         flex-direction: row;
@@ -442,13 +545,14 @@ export default class CSS{
 
       body > menu > main{
         width: 100%;
-        padding: calc(${CSS.values.padding.default} * 2);
+        padding: calc(var(--padding) * 2);
 
         display: flex;
         flex-direction: column;
-        gap: calc(${CSS.values.gap.default} / 2);
+        gap: calc(var(--gap) / 2);
 
       }
+<<<<<<< HEAD
 
       body > menu > main > section[for=menu]{
         display: grid;
@@ -463,37 +567,51 @@ export default class CSS{
       body > menu > main > section[for=menu] > a{
         width: 100%;
 
+=======
+      body > menu > main > a{
+>>>>>>> main
         color: white;
-        font-size: 2rem;
+        font-size: 1rem;
 
         grid-area: hyperlink;
 
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        gap: ${CSS.values.gap.default};
+        gap: var(--gap);
 
         border: 1px solid transparent;
-        border-radius: ${CSS.values.radius.default};
-        padding: ${CSS.values.padding.default} calc(${CSS.values.padding.default} * 2);
+        border-radius: var(--radius);
+        padding: var(--padding) calc(var(--padding) * 2);
 
-        transition: ${CSS.values.transition.velocity} ease-in-out;
-        transition-property: filter, background-color, border;
+        transition: var(--transition-velocity) ease-in-out;
+        transition-property: background-color, border;
 
       }
+<<<<<<< HEAD
       body > menu > main > section[for=menu] > a:where([active], :hover),
       body > menu > main > section[for=menu] > section[for=submenu] > a:where([active], :hover){
         background-color: var(--menu-background-color);
         filter: brightness(120%);
+=======
+      body > menu > main > a:where([active], :hover){
+        background-color: hsla(${CSS.values.color.brand.hue}, 10%, 25%, 0.3);
+>>>>>>> main
 
       }
       body > menu > main > section[for=menu] > a:where([active]){
         border: 1px solid white;
 
       }
+<<<<<<< HEAD
       body > menu > main > section[for=menu] > a > x-icon{
         height: 40px;
         width: 40px;
+=======
+      body > menu > main > a > x-icon{
+        height: 30px;
+        width: 30px;
+>>>>>>> main
 
       }
       body > menu > main > section[for=menu] > a > span{
@@ -556,31 +674,33 @@ export default class CSS{
       body > cover{
         pointer-events:auto;
 
-        background: ${CSS.values.color.cover};
-        backdrop-filter: blur(${CSS.values.blur.default});
+        background: var(--color-cover);
+        backdrop-filter: blur(var(--blur));
         opacity: 0;
         width: 100vw;
         height: 100vh;
 
         position: fixed;
-        z-index: ${CSS.values.zIndex.minus};
+        top: 0px;
+        left: 0px;
+        z-index: var(--z-minus);
 
-        transition: ${CSS.values.transition.velocity} opacity;
+        transition: var(--transition-velocity) opacity;
 
       }
 
       body > header{
-        background-color: ${CSS.values.color.main};
+        background-color: var(--color-main);
         color: white;
 
         width: 100%;
-        height: ${CSS.values.header.height};
-        padding: ${CSS.values.padding.default};
+        height: var(--header-height);
+        padding: var(--padding);
 
-        position: sticky;
-        top: 0;
-        left: 0;
-        z-index: ${CSS.values.zIndex.header};
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        z-index: var(--z-header);
 
         display: grid;
         grid-template-columns: auto 3fr;
@@ -589,34 +709,65 @@ export default class CSS{
 
       }
       body > header > x-icon[for=menu]{
-        height: calc(${CSS.values.header.height} - ${CSS.values.padding.default} * 2);
-        width: calc(${CSS.values.header.height} - ${CSS.values.padding.default} * 2);
+        height: calc(var(--header-height) - var(--padding) * 2);
+        width: calc(var(--header-height) - var(--padding) * 2);
 
       }
 
 
       body > main {
         width: 100vw;
-        min-height: calc(100vh - ${CSS.values.header.height} - ${CSS.values.footer.height});
+        min-height: calc(100vh - var(--header-height));
 
       }
 
       body > footer {
-        background-color: ${CSS.values.color.surface["2"]};
-        color: ${CSS.values.color.text.primary};
+        background-color: var(--color-surface-2);
+        color: var(--color-text-primary);
 
         width: 100%;
-        height: ${CSS.values.footer.height};
-        padding: ${CSS.values.padding.default};
+        height: var(--footer-height);
+        padding: var(--padding);
 
         display: grid;
         place-items: center;
 
       }
 
+      @media only screen and (max-width: ${CSS.values.screenSize.phone}) {
+        :root{
+          font-size: 16px;
+        }
+
+        html, body{
+          height: 100vh;
+          height: ${CSS.values.document.height};
+          overflow: hidden;
+
+        }
+
+        body > toasts{
+          width: 100vw;
+          gap: 5px;
+        }
+
+        body > main {
+          width: 100vw;
+          height: calc(${CSS.values.document.height} - var(--header-height));
+          overflow: hidden;
+          overflow-y: scroll;
+
+        }
+
+        body > footer{
+          display: none;
+        }
+
+      }
+
     `;
 
-    const defaults = `
+    CSS.rules.elementsDefaults = `
       /****************************** SVG START ******************************/
       svg{
         cursor: pointer;
@@ -639,6 +790,12 @@ export default class CSS{
         color: ${CSS.values.color.text.primary};
       }
       /****************************** a END ******************************/
+
+      /****************************** LI START ******************************/
+      li{
+        margin-left: 20px;
+      }
+      /****************************** LI END ******************************/
 
       /****************************** Info, Success, Warning, Error START ******************************/
       success{
@@ -696,17 +853,17 @@ export default class CSS{
     `;
 
     return `
-      ${all}
-      ${scrollbar}
-      ${skeleton}
-      ${defaults}
+      ${CSS.rules.selectorsDefaults}
+      ${CSS.rules.scrollbar}
+      ${CSS.rules.root}
+      ${CSS.rules.skeleton}
+      ${CSS.rules.elementsDefaults}
     `;
 
   }
 
   static styles(){
-    const form = `
-      /****************************** Form START ******************************/
+    CSS.rules.form = `
       /************ Form Variables START ************/
       :root{
         --f-padding: 10px;
@@ -715,8 +872,8 @@ export default class CSS{
         --f-height: 40px;
         --f-width: 100%;
         --f-font-size: 20px;
-        --f-border: 1px solid ${CSS.values.color.text.secondary};
-        --f-transition: ${CSS.values.transition.velocity} ease-in-out;
+        --f-border: 1px solid var(--color-text-secondary);
+        --f-transition: var(--transition-velocity) ease-in-out;
         --f-transition-property: background-color, border;
       }
       /************ Form Variables END ************/
@@ -757,8 +914,8 @@ export default class CSS{
 
       /************ fieldset > legend START ************/
       form fieldset legend{
-        background-color: ${CSS.values.color.text.primary};
-        color: ${CSS.values.color.text.accent};
+        background-color: var(--color-text-primary);
+        color: var(--color-text-accent);
         border-radius: var(--f-radius);
         padding: 2px 5px;
 
@@ -772,9 +929,11 @@ export default class CSS{
 
       /************ label > p START ************/
       form label > p{
-        height: 2em;
+        font-size: 0.8rem;
+        min-height: 1rem;
         display: flex;
         flex-direction: row;
+        padding: var(--padding);
       }
       /************ label > p START ************/
 
@@ -782,7 +941,7 @@ export default class CSS{
       select,
       textarea,
       input:where([type=text], [type=eMail], [type=password], [type=number], [type=color], [type=file], [type=date]){
-        background-color: ${CSS.values.color.surface["3"]};
+        background-color: var(--color-surface-3);
         width: var(--f-width);
         height: var(--f-height);
         font-size: var(--f-font-size);
@@ -801,8 +960,8 @@ export default class CSS{
       textarea:not(:disabled):where(:hover, :focus),
       input[type=number]:not(:disabled):where(:hover, :focus),
       input:not(:disabled):where(:hover, :focus){
-        background-color: ${CSS.values.color.surface["5"]};
-        border: 1px solid ${CSS.values.color.text.primary};
+        background-color: var(--color-surface-5);
+        border: 1px solid var(--color-text-primary);
 
       }
       /************ :hover & :focus -> inputs & textarea & select END ************/
@@ -856,14 +1015,14 @@ export default class CSS{
 
       /* Input */
       input[type=file]{
-        padding: ${CSS.values.padding.default};
+        padding: var(--padding);
         font-size: var(--f-font-size);
 
       }
 
       /* File Button */
       input[type=file]::file-selector-button{
-        background-color: ${CSS.values.color.main};
+        background-color: var(--color-main);
         color: white;
         font-size: var(--f-font-size);
 
@@ -875,7 +1034,7 @@ export default class CSS{
         cursor: pointer;
 
         filter: brightness(120%);
-        transition: ${CSS.values.transition.velocity} filter;
+        transition: var(--transition-velocity) filter;
 
       }
 
@@ -916,89 +1075,98 @@ export default class CSS{
       /************ input[type=submit] & button START ************/
       button,
       input[type=submit]{
-        background-color: ${CSS.values.color.main};
+        background-color: var(--color-main);
         color: white;
+        text-transform: uppercase;
+
         overflow: hidden;
         width: auto;
         height: var(--f-height);
+
         padding: 0px var(--f-padding);
         border-radius: var(--f-radius);
         border: none;
-        text-transform: uppercase;
+        box-shadow: var(--shadow-default);
 
         cursor: pointer;
 
         filter: brightness(120%);
-        transition: ${CSS.values.transition.velocity} filter;
+        transition: var(--transition-velocity) ease-in-out;
+        transition-property: filter transform;
 
       }
 
-      button:not(:disabled):where(:active, :focus, :hover),
-      input[type=submit]:not(:disabled):where(:active, :focus, :hover){
+      /* On Hover */
+      button:not(:disabled):where(:hover),
+      input[type=submit]:not(:disabled):where(:hover){
         filter: brightness(80%);
+        transform: scale(1.1);
+      }
+
+      /* On Activate */
+      button:not(:disabled):where(:active, :focus),
+      input[type=submit]:not(:disabled):where(:active, :focus){
+        filter: brightness(80%);
+        transform: scale(0.8);
       }
 
       /************ input[type=submit] & button END ************/
-
-      /****************************** Form END ******************************/
     `;
 
-    const table = `
-      /****************************** Table START ******************************/
-
+    CSS.rules.table = `
       /************ Table START ************/
       table{
         --table-radius: 3px;
 
         /* make table cells with same */
-        table-layout: fixed;
+        table-layout: auto;
 
         width: 100%;
-        border: 1px solid ${CSS.values.color.main};
-        border-radius: ${CSS.values.radius.default};
-        padding: ${CSS.values.padding.default};
+        border: 1px solid var(--color-main);
+        border-radius: var(--radius);
+        padding: var(--padding);
 
       }
       /************ Table END ************/
 
       /************ thead START ************/
       table > thead{
-        background-color: ${CSS.values.color.surface["10"]};
+        background-color: var(--color-surface-10);
       }
 
       table > thead > tr > th{
-        color: ${CSS.values.color.text.accent};
+        color: var(--color-text-accent);
         font-weight: bold;
 
         border-radius: var(--table-radius);
-        padding: ${CSS.values.padding.default};
+        padding: var(--padding);
 
       }
       /************ thead END ************/
 
       /************ tbody START ************/
       table > tbody > tr:nth-child(odd){
-        background-color: ${CSS.values.color.surface["3"]};
+        background-color: var(--color-surface-4);
 
       }
       table > tbody > tr:nth-child(even){
-        background-color: ${CSS.values.color.surface["4"]};
+        background-color: var(--color-surface-5);
 
       }
 
       table > tbody > tr > td{
         border-radius: var(--table-radius);
-        padding: ${CSS.values.padding.default};
+        padding: var(--padding);
 
       }
 
       /* tr:hover START */
       table > tbody > tr{
-        transition: ${CSS.values.transition.velocity} ease-in-out background-color;
+        transition: var(--transition-velocity) ease-in-out background-color;
       }
 
       table > tbody > tr:hover{
-        background-color: ${CSS.values.color.surface["7"]};
+        background-color: var(--color-surface-7);
       }
       /* tr:hover END */
 
@@ -1006,30 +1174,28 @@ export default class CSS{
 
       /************ tfead START ************/
       table > tfoot{
-        background-color: ${CSS.values.color.surface["9"]};
+        background-color: var(--color-surface-9);
       }
 
       table > tfoot > tr > td{
-        color: ${CSS.values.color.text.accent};
+        color: var(--color-text-accent);
 
         border-radius: var(--table-radius);
-        padding: ${CSS.values.padding.default};
+        padding: var(--padding);
 
       }
       /************ tfoot END ************/
-
-      /****************************** Table END ******************************/
     `;
 
     return `
-      ${form}
-      ${table}
+      ${CSS.rules.form}
+      ${CSS.rules.table}
     `;
 
   }
 
   static layouts(){
-    const boxes = `
+    CSS.rules.boxes = `
       /*********************** Themed Boxes START ***********************/
       /* Default */
       .box-default{
@@ -1062,7 +1228,7 @@ export default class CSS{
       /*********************** Themed Boxes END ***********************/
     `;
 
-    const layoutSystem = `
+    CSS.rules.layoutSystem = `
       /*********************** Layout System START ***********************/
       container{
         /* border: 1px green solid; */
@@ -1101,6 +1267,17 @@ export default class CSS{
         flex-direction: column;
         /* justify-content: center; */
         align-items: center;
+
+      }
+
+      @media only screen and (max-width: ${CSS.values.screenSize.phone}) {
+        row{
+          flex-direction: column;
+          width: 100% !important;
+        }
+        column{
+          width: 100% !important;
+        }
 
       }
 
@@ -1267,8 +1444,8 @@ export default class CSS{
     `;
 
     return `
-      ${boxes}
-      ${layoutSystem}
+      ${CSS.rules.boxes}
+      ${CSS.rules.layoutSystem}
     `;
 
   }

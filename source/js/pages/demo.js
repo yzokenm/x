@@ -361,6 +361,7 @@ const themedBoxes = `
 </container>
 `;
 
+
 ///// x-tooltip
 const tooltips = `
 <container class="m-t-5">
@@ -377,6 +378,7 @@ const tooltips = `
 </container>
 `;
 
+
 ///// x-tooltip
 const copy = `
 <container class="m-t-5">
@@ -391,6 +393,7 @@ const copy = `
 </container>
 `;
 
+
 ///// x-tooltip
 const share = `
 <container class="m-t-5">
@@ -404,6 +407,7 @@ const share = `
 </container>
 `;
 
+
 ///// x-modal
 const modal = `
 <container class="m-t-5">
@@ -412,12 +416,113 @@ const modal = `
 
   <row class="box-default w-25 p-5" class="g-1">
     <x-modal trigger="auto">Auto</x-modal>
+
     <x-modal trigger="click" type="icon" value="idea">Icon + Click</x-modal>
-    <x-modal trigger="click" type="text" value="Click Me">Button + Text + Click</x-modal>
+    <x-modal trigger="click" type="text" value="Click Me">Text + Click</x-modal>
+
+    <x-modal trigger="click" button type="icon" value="idea">Button + Icon + Click</x-modal>
+    <x-modal trigger="click" button type="text" value="Click Me">Button + Text + Click</x-modal>
+
   </row>
 
 </container>
 `;
+
+
+///// Fonts
+const fonts = `
+<container class="m-t-5">
+
+  <row><h1>Fonts</h1></row>
+
+  <row>
+    <column>
+      <p>System Default Font Family: <b>Quicksand</b></p>
+      <p>All Fonts Listed Here Are <b>Regular</b></p>
+    </column>
+  </row>
+
+  <row>
+
+    <column class="w-75 box-default p-5 m-t-5">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Sample</th>
+          </tr>
+        </thead>
+
+        <tbody style="font-size: 1.3rem;">
+
+          <tr>
+            <td>Quicksand</td>
+            <td><span style="font-family: Quicksand;">When Creativity Meets Technology<span></td>
+          </tr>
+
+          <tr>
+            <td>AlegreyaSans</td>
+            <td><span style="font-family: AlegreyaSans;">When Creativity Meets Technology<span></td>
+          </tr>
+
+          <tr>
+            <td>Cardo</td>
+            <td><span style="font-family: Cardo;">When Creativity Meets Technology<span></td>
+          </tr>
+
+          <tr>
+            <td>Cinzel</td>
+            <td><span style="font-family: Cinzel;">When Creativity Meets Technology<span></td>
+          </tr>
+
+          <tr>
+            <td>Eczar</td>
+            <td><span style="font-family: Eczar;">When Creativity Meets Technology<span></td>
+          </tr>
+
+          <tr>
+            <td>Gruppo</td>
+            <td><span style="font-family: Gruppo;">When Creativity Meets Technology<span></td>
+          </tr>
+
+          <tr>
+            <td>JosefinSans</td>
+            <td><span style="font-family: JosefinSans;">When Creativity Meets Technology<span></td>
+          </tr>
+
+          <tr>
+            <td>JosefinSlab</td>
+            <td><span style="font-family: JosefinSlab;">When Creativity Meets Technology<span></td>
+          </tr>
+
+          <tr>
+            <td>Macondo</td>
+            <td><span style="font-family: Macondo;">When Creativity Meets Technology<span></td>
+          </tr>
+
+          <tr>
+            <td>Philosopher</td>
+            <td><span style="font-family: Philosopher;">When Creativity Meets Technology<span></td>
+          </tr>
+
+          <tr>
+            <td>Marcellus</td>
+            <td><span style="font-family: Marcellus;">When Creativity Meets Technology<span></td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </column>
+
+  </row>
+
+</container>
+`;
+
 
 ///// Page Scoped Data Holder
 // Must Be Set/Change The Value Inside The before(), content() or after()
@@ -449,6 +554,7 @@ export default function content(){
     ${copy}
     ${share}
     ${modal}
+    ${fonts}
     <br>
   `;
 
@@ -466,3 +572,9 @@ export function after(){
 
 ///// Executes The Function When On Form Got Response
 export function onFormGotResponse(response){}
+
+///// Footer
+export function footer(){
+  return "This Is Demo Footer!";
+
+}

@@ -66,28 +66,33 @@ export default class Core{
 
       window.CONF = response["CONF"];
       window.session = response["session"];
-      window.langCode = response["langCode"];
-      window.langDict = response["langDict"];
-      window.USER_TYPES = response["USER_TYPES"];
-      // window.languages = response["languages"];
-      // window.currencies = response["currencies"];
+      window.LANG_CODE = response["LANG_CODE"];
+      window.LANG_DICT = response["LANG_DICT"];
+      window.USER_AUTHENTICITY_STATUSES = response["USER_AUTHENTICITY_STATUSES"];
+      window.USER_ROLES = response["USER_ROLES"];
 
       // Load External SVGs To SVG Class
-      window.SVG.set(response["EXTERNAL_SVG"]);
+      window.SVG.set(response["PROJECT_SVG"]);
   }
 
   /////// Event Handlers
   static #firstLoad(){
-    // console.log("firstLoad");
+    console.log("firstLoad");
+
+    CSS.init();
 
     Menu.init();
     Menu.setActive();
 
+    Footer.init();
+
     Router.handle();
+
 
   }
 
   static #onLoad(){
+    // Works On The First Visit
     document.addEventListener('readystatechange', ()=>{
       if(event.target.readyState === 'loading') return;
       if(event.target.readyState === 'interactive') return;

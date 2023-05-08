@@ -1,14 +1,7 @@
-# Flask
-from main import app, request, render_template
-
-# Utils
-from main import json
-
-# Home Made
-from main import CONF, session, EXTERNALS
-
-from python.tools.tools import pageGuard
-from python.tools.response import response
+from main import app, request, render_template, session
+from python.modules.tools import pageGuard
+from python.modules.response import response
+from python.modules.Globals import Globals
 
 
 #################################################### Log Out
@@ -26,9 +19,6 @@ def logOut():
         # Remove User From Session
         session.pop('user')
 
-        # Reset Site Language To The Default
-        global langCode
-        langCode = CONF["default"]["language"]
 
         # Redirect To Home
         return response(

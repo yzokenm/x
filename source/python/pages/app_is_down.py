@@ -1,10 +1,6 @@
-# Flask
 from main import app, request, render_template
-
-# Home Made
-from main import CONF, EXTERNALS
-
-from python.tools.tools import pageGuard
+from python.modules.tools import pageGuard
+from python.modules.Globals import Globals
 
 #################################################### App Is Down
 @app.route("/appIsDown", methods=["GET"])

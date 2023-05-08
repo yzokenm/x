@@ -24,7 +24,6 @@
 // else if(DOM.page.before.constructor.name === 'Function') DOM.page.before();
 
 export default class DOM{
-  static #elementMain = document.querySelector(window.Main.selector);
   static #page = null;
 
   static setPage(page){
@@ -51,9 +50,11 @@ export default class DOM{
     // Create Page Scoped Variable
     window.pageData = {};
 
+    ////////// Title
     // Set Title
     window.Title.set(DOM.#page.TITLE);
 
+    ////////// Content / Main
     ///// Before
     // Check If before() Exists
     if(!!DOM.#page.before === true)
@@ -77,17 +78,24 @@ export default class DOM{
       if(DOM.#page.after.constructor.name === 'AsyncFunction') await DOM.#page.after();
       else DOM.#page.after();
 
+    ////////// Footer
+    // Let Footer Class To Handle
+    window.Footer.handle(DOM.#page.footer);
+
     // Delete The Page Data At The End Of Each Life Cycle
     delete window.pageData;
 
   }
 
   static render(dom){
+    // Scroll To Top Before Rendering
+    window.scrollTo(0, 0);
+
     // If Passed Object Like: createElement("x-form")
-    if(typeof dom === "object") DOM.#elementMain.replaceChildren(dom);
+    if(typeof dom === "object") window.Main.element.replaceChildren(dom);
 
     // If Passed String Like: "<x-form></x-from>"
-    else if(typeof dom === "string") DOM.#elementMain.innerHTML = dom;
+    else if(typeof dom === "string") window.Main.element.innerHTML = dom;
 
     window.dispatchEvent(new CustomEvent("domChange"));
 

@@ -49,16 +49,20 @@ default:
   currency: "USD"
   title: "X"
   language: "en"
+  charset: "utf-8"
+
+  # To Control App's State (Offline, Under Development etc.)
   # appIsDown:
   #   reason: "Under Development"
   #   explanation: "Long text that describes the 'reason'"
   #   logo: "SVG Logo To Be Shown"
 
-
-
-######### HTML
-HTML:
-  charset: "utf-8"
+  # For External Color Configurations
+  color:
+    brand:
+      hue: 230        # deg
+      saturation: 13  # %
+      lightness: 9    # %
 
 
 ######### Menu
@@ -79,66 +83,57 @@ menu:
 pages:
   home:
     enabled: true
-    allowed:
-      - "everyone"
-
-    aliases:
+    endpoints:
       - "/"
       - "/home"
 
 
   signUp:
     enabled: true
-    allowed:
+    authenticity_statuses:
       - "unauthenticated"
 
-    aliases:
+    endpoints:
       - "/signUp"
 
 
   eMailConfirmation:
     enabled: true
-    allowed:
+    authenticity_statuses:
       - "unauthorized"
 
-    aliases:
+    endpoints:
       - "/eMailConfirmation"
 
 
   logIn:
     enabled: true
-    allowed:
+    authenticity_statuses:
       - "unauthenticated"
 
-    aliases:
+    endpoints:
       - "/logIn"
 
 
   logOut:
     enabled: true
-    allowed:
+    authenticity_statuses:
       - "unauthorized"
       - "authorized"
 
-    aliases:
+    endpoints:
       - "/logOut"
 
 
   demo:
     enabled: true
-    allowed:
-      - "everyone"
-
-    aliases:
+    endpoints:
       - "/demo"
 
 
   languagesLibrary:
     enabled: true
-    allowed:
-      - "everyone"
-
-    aliases:
+    endpoints:
       - "/languagesLibrary"
 
 

@@ -1,17 +1,14 @@
-# Flask
-from main import app, request, render_template
+import re, random
+from main import app, request, render_template, session
 
-# Home Made
-from main import CONF, MySQL, USER_TYPES, session, EXTERNALS
-
-import re, json, random
-
-from python.tools.GMail import GMail
-
-from python.tools import userFolders
-from python.tools.response import response
-
-from python.tools.tools import pageGuard, publicSessionUser
+# from python.modules.GMail import GMail
+from python.modules.SendGrid import SendGrid
+from python.modules.FileSystem import FileSystem
+from python.modules.response import response
+from python.modules.tools import pageGuard
+from python.modules.Globals import Globals
+from python.modules.User import User
+from python.modules.MySQL import MySQL
 
 
 
@@ -34,7 +31,7 @@ def signUp():
             return response(type="error", message="eMailEmpty", field="eMail")
 
         # eMailInvalid
-        if not re.match(CONF["eMail"]["regEx"], request.form["eMail"]):
+        if not re.match(Globals.CONF["eMail"]["regEx"], request.form["eMail"]):
             return response(type="error", message="eMailInvalid", field="eMail")
 
         ######## password
@@ -43,15 +40,15 @@ def signUp():
             return response(type="error", message="passwordEmpty", field="password")
 
         # passwordMinLength
-        if len(request.form["password"]) < CONF["password"]["min_length"]:
+        if len(request.form["password"]) < Globals.CONF["password"]["min_length"]:
             return response(type="error", message="passwordMinLength", field="password")
 
         # passwordMaxLength
-        if len(request.form["password"]) > CONF["password"]["max_length"]:
+        if len(request.form["password"]) > Globals.CONF["password"]["max_length"]:
             return response(type="error", message="passwordMaxLength", field="password")
 
         # passwordAllowedChars
-        if not re.match(CONF["password"]["regEx"], request.form["password"]):
+        if not re.match(Globals.CONF["password"]["regEx"], request.form["password"]):
             return response(type="error", message="passwordAllowedChars", field="password")
 
         ######## eMail and Password In Use
@@ -73,19 +70,24 @@ def signUp():
         # Generate Randome Verification Code
         eMailVerificationCode = random.randint(100000, 999999)
 
-        # Check If Verification Code Sent Successfully
-        if GMail(request.form["eMail"], eMailVerificationCode) == False:
+        #### Check If Verification Code Sent Successfully
+        # GMail
+        # if GMail(request.form["eMail"], eMailVerificationCode) == False:
+        #     return response(type="error", message="couldNotSendEMailVerificationCode")
+
+        # SendGrid
+        if SendGrid.send("yahya", request.form["eMail"], eMailVerificationCode, "Sign Up") == False:
             return response(type="error", message="couldNotSendEMailVerificationCode")
 
         # Insert To Database
         with MySQL(False) as db:
             db.execute(
-                ("INSERT INTO users (password, eMail, eMail_verification_code, type) VALUES (%s, %s, %s, %s)"),
+                ("INSERT INTO users (password, eMail, eMail_verification_code, authenticity_status) VALUES (%s, %s, %s, %s)"),
                 (
                     request.form["password"],
                     request.form["eMail"],
                     eMailVerificationCode,
-                    USER_TYPES["unauthorized"]["id"]
+                    Globals.USER_AUTHENTICITY_STATUSES["unauthorized"]["id"]
                 )
             )
             db.commit()
@@ -96,7 +98,7 @@ def signUp():
             # Get User Data
             with MySQL(False) as db:
                 db.execute(
-                    ("SELECT * FROM users WHERE eMail=%s AND password=%s"),
+                    ("SELECT id FROM users WHERE eMail=%s AND password=%s"),
                     (
                         request.form["eMail"],
                         request.form["password"]
@@ -109,9 +111,12 @@ def signUp():
 
                 # Set Session User Data
                 session["user"] = db.fetchOne()
+                # Handle The Session Update Error
+                if not User.updateSession():
+                    pass
 
             # Setup Dirs
-            if userFolders.create() == False:
+            if FileSystem.initUserFolders() == False:
                 # Handle Folder Creation Errors
                 pass
 

@@ -21,8 +21,14 @@ export default class Icon extends HTMLElement{
       const style = document.createElement('style');
       style.textContent = `
         icon{
+<<<<<<< HEAD
           cursor: pointer;
           user-select: none;
+=======
+          cursor: ${this.parentElement.getAttribute("disabled") !== null ? 'not-allowed' : 'pointer'};
+          display: block;
+
+>>>>>>> main
         }
         icon > svg{
           width: 100%;

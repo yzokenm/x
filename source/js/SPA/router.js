@@ -1,6 +1,8 @@
 "use strict";
 
 export default class Router{
+  static currentPage = null;
+
   static async handle(){
     // Check If App Is Down If So Stop Handling Set appIsDown As Current Page
     if("appIsDown" in window.CONF["default"]){
@@ -17,15 +19,17 @@ export default class Router{
       // console.log(page);
 
       // Pass The Page To routeGuard Tests
-      if(Router.#routeGuard(page) === false) continue;
+      if(Router.routeGuard(page) === false) continue;
 
       // Aliases
       loopAliases:
-      for(const alias of window.CONF["pages"][page]["aliases"])
+      for(const alias of window.CONF["pages"][page]["endpoints"])
 
         // Check If Page Alias Equals To Currnt Endpoint
         if(alias == window.location.pathname){
           endpoint = '/'+page;
+          Router.currentPage = page;
+
           // Break Out Of The Loops
           break loopPages;
 
@@ -54,7 +58,13 @@ export default class Router{
       window.Title.set("error");
 
       // Render The Error
-      window.DOM.render(error);
+      window.DOM.render(`
+        <container>
+          <row class="m-t-5 box-default p-5 w-50">
+            <error>${error}</error>
+          </row>
+        </container>
+      `);
 
     }finally{
       // End Loading Effect
@@ -64,7 +74,7 @@ export default class Router{
 
   }
 
-  static #routeGuard(page){
+  static routeGuard(page){
     // Check If Page Exists
     // Already Looping Through Existent Pages
 
@@ -74,30 +84,80 @@ export default class Router{
 
 
     // Everyone
-    if(window.CONF["pages"][page]["allowed"].includes("everyone")) return true;
+    if(
+      !("authenticity_statuses" in window.CONF["pages"][page]) &&
+      !("roles" in window.CONF["pages"][page]) &&
+      !("plans" in window.CONF["pages"][page])
+    ) return true;
 
 
     // Session Dependent Checks
     if("user" in window.session){
 
-    // Root
-    if(window.session["user"]["type"] == window.USER_TYPES["root"]["id"]) return true;
+      // Root
+      if(window.session["user"]["roles"].includes("root")) return true;
 
-    // If User Type Matches With One Of The Page's Allowed User Types
-    for(let user_type in window.USER_TYPES)
+      ///// Authenticity Statuses
+      let authenticity_check = false;
+      if("authenticity_statuses" in window.CONF["pages"][page]){
+        for(const authenticity_status in window.USER_AUTHENTICITY_STATUSES)
+          if(
+            window.session["user"]["authenticity_status"] == window.USER_AUTHENTICITY_STATUSES[authenticity_status]["id"] &&
+            window.CONF["pages"][page]["authenticity_statuses"].includes(authenticity_status)
+          ) authenticity_check = true;
+
+      }else authenticity_check = true;
+
+      ///// Roles
+      let role_check = false;
+      if("roles" in window.CONF["pages"][page]){
+        // Check If One Of The User Assigned Roles Match With The CONF[page]["roles"]
+        for(let i = 0; i < window.session["user"]["roles"].length; i++)
+          if(window.CONF["pages"][page]["roles"].includes(window.session["user"]["roles"][i])){
+            role_check = true;
+            break;
+          }
+
+      }else role_check = true;
+
+      ///// Plans - similar to role check
+      let plan_check = true; // Should be false in actual implementation
+
+      ///// Final Check: IF All Checks Passed
       if(
-        window.session["user"]["type"] == window.USER_TYPES[user_type]["id"] &&
-        window.CONF["pages"][page]["allowed"].includes(user_type)
-      )
-      return true;
+        authenticity_check === true &&
+        role_check === true &&
+        plan_check === true
+      ) return true;
 
     }
 
 
     // Session Independent Checks
     if(!("user" in window.session)){
+      ///// Authenticity Statuses
+      let authenticity_check = false;
       // Unauthenticated User
-      if(window.CONF["pages"][page]["allowed"].includes("unauthenticated")) return true;
+      if(
+        !("authenticity_statuses" in window.CONF["pages"][page]) ||
+        "authenticity_statuses" in window.CONF["pages"][page] &&
+        window.CONF["pages"][page]["authenticity_statuses"].includes("unauthenticated")
+      ) authenticity_check = true;
+
+      ///// Roles
+      let role_check = false;
+      if(!("roles" in window.CONF["pages"][page])) role_check = true;
+
+      ///// Plans
+      let plan_check = false;
+      if(!("plans" in window.CONF["pages"][page])) plan_check = true;
+
+      ///// Final Check: IF All Checks Passed
+      if(
+        authenticity_check === true &&
+        role_check === true &&
+        plan_check === true
+      ) return true;
 
     }
 

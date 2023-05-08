@@ -1,13 +1,9 @@
-# Flask
 from main import app, request, render_template, session
-
-# Home Made
-from main import CONF, USER_TYPES, MySQL, EXTERNALS
-
-import json
-
-from python.tools.tools import pageGuard, updateSessionUser
-from python.tools.response import response
+from python.modules.tools import pageGuard
+from python.modules.response import response
+from python.modules.Globals import Globals
+from python.modules.User import User
+from python.modules.MySQL import MySQL
 
 #################################################### Demo
 @app.route("/eMailConfirmation", methods=["GET", "POST"])
@@ -54,7 +50,7 @@ def eMailConfirmation():
                     ("UPDATE users SET eMail_verification_attempts_count=%s, type=%s  WHERE id=%s"),
                     (
                         (session["user"]["eMail_verification_attempts_count"] + 1),
-                        USER_TYPES["authorized"]["id"],
+                        Globals.USER_TYPES["authorized"]["id"],
                         session["user"]["id"],
                     )
                 )
@@ -63,7 +59,7 @@ def eMailConfirmation():
                 if db.hasError(): return response(type="error", message="databaseError")
 
                 # Update The session["user"] After The Changes To The Database
-                updateSessionUser()
+                User.updateSession()
 
             return response(
                 type="success",

@@ -21,7 +21,11 @@ if __name__ != "__main__":
 
 
         def __init__(self, prep=True):
+            # Check If MySQL Is Enabled
+            # if MySQL.enabled == False: return False
+
             self._hasError = False
+
             self._conn = mysql.connector.connect(
                 user = MySQL.user,
                 password = MySQL.password,
@@ -29,11 +33,11 @@ if __name__ != "__main__":
                 database = MySQL.database,
                 use_pure=True
             )
+
             self._conn.set_charset_collation(MySQL.charset, MySQL.collate)
-            if prep:
-                self._curs = self._conn.cursor(prepared=True)
-            else:
-                self._curs = self._conn.cursor(dictionary=True)
+
+            if prep: self._curs = self._conn.cursor(prepared=True)
+            else: self._curs = self._conn.cursor(dictionary=True)
 
         def __enter__(self):
             return self
@@ -78,6 +82,12 @@ if __name__ != "__main__":
             if self._hasError == True: return False
 
             return self.cursor.rowcount()
+
+        def lastrowid(self):
+            # Check If Execute Has Error
+            if self._hasError == True: return False
+
+            return self.cursor.lastrowid
 
         # Error
         def hasError(self):

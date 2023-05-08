@@ -1,9 +1,7 @@
 if __name__ != "__main__":
     from main import make_response
-
-    from main import PUBLIC_CONF
-
-    from python.tools.tools import publicSessionUser
+    from python.modules.Globals import Globals
+    from python.modules.User import User
 
     import json
 
@@ -67,7 +65,7 @@ if __name__ != "__main__":
         if updateConf: actionsDict["updateConf"] = PUBLIC_CONF
 
         ## setSessionUser
-        if setSessionUser is True: actionsDict["setSessionUser"] = publicSessionUser()
+        if setSessionUser is True: actionsDict["setSessionUser"] = User.generatePublicSession()
 
         ## deleteSessionUser
         if deleteSessionUser is True: actionsDict["deleteSessionUser"] = 0

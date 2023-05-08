@@ -33,29 +33,26 @@ export default class Modal extends HTMLElement{
     CSS: {
       const style = document.createElement('style');
       style.textContent = `
+        ${window.CSS.rules.all}
+
         modal{
           pointer-events: none;
 
-          background-color: ${window.CSS.values.color.surface["4"]};
+          background-color: var(--color-surface-4);
           opacity: 0;
 
           display: block;
 
-          width: auto;
-          max-width: 80vw;
-          height: auto;
-          max-height: 80vh;
-
-          border-radius: ${window.CSS.values.radius.default};
-          box-shadow: ${window.CSS.values.shadow.default};
+          border-radius: var(--radius);
+          box-shadow: var(--shadow-default);
 
           position: fixed;
-          z-index: ${window.CSS.values.zIndex.modal};
+          z-index: var(--z-modal);
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%) scale(0.8);
 
-          transition: ${window.CSS.values.transition.velocity} ease-in-out;
+          transition: var(--transition-velocity) ease-in-out;
           transition-property: transform, opacity;
 
         }
@@ -79,53 +76,55 @@ export default class Modal extends HTMLElement{
         }
 
         modal > header{
-          width: 100%;
+          background: var(--color-surface-2);
+
+          width: 35px;
           height: 35px;
 
-          display: flex;
-          justify-content: flex-end;
+          padding: 5px;
+          border-radius: 50%;
+          box-shadow: var(--shadow-default);
+
+          position: absolute;
+          top: -15px;
+          right: -15px;
+
+          transition: var(--transition-velocity) ease-in-out transform;
+
+        }
+        modal > header:hover{
+          transform: scale(1.1);
 
         }
 
         modal > main{
-          width: max-content;
-          height: max-content;
+          width: auto;
 
-          padding: ${window.CSS.values.padding.default};
+          width: auto;
+          max-width: 80vw;
+          height: auto;
+          max-height: 80vh;
+
+          overflow: hidden;
+          overflow-y: scroll;
+
+          padding: var(--padding);
+          padding-top: 25px;
 
           display: grid;
           place-items: center;
 
         }
 
+        trigger{
+          cursor: pointer;
+        }
+
         trigger:empty{
           pointer-events: none;
         }
-
-        trigger > button{
-          background-color: ${window.CSS.values.color.main};
-          color: white;
-          overflow: hidden;
-          width: auto;
-          height: 50px;
-          padding: 0px 5px;
-          border-radius: ${window.CSS.values.padding.default};
-          border: none;
-          text-transform: uppercase;
-
-          cursor: pointer;
-
-          filter: brightness(120%);
-          transition: ${window.CSS.values.transition.velocity} filter;
-
-        }
-
-        trigger > button:hover{
-          filter: brightness(80%);
-        }
-
-
       `;
+
       this.shadow.appendChild(style);
     }
 
@@ -138,7 +137,7 @@ export default class Modal extends HTMLElement{
     // Manually Collecting Forms
     window.Form.collect(this.shadow.querySelector("modal>main"));
 
-    Interactions: {
+    Trigger: {
       // Instant Pop-Up
       if(
         !!this.hasAttribute("trigger") === false ||
@@ -149,14 +148,28 @@ export default class Modal extends HTMLElement{
       // Create Click Event
       else if(this.getAttribute("trigger") === "click")
 
-        if(!!this.hasAttribute("type") === true && !!this.hasAttribute("value") === true)
+        if(!!this.hasAttribute("type") === true && !!this.hasAttribute("value") === true){
 
-          if(this.getAttribute("type") === "icon")
-            this.shadow.querySelector("trigger").innerHTML = `<x-icon>${this.getAttribute("value")}</x-icon>`;
+          if(this.getAttribute("type") === "icon"){
+            if(this.hasAttribute("button") === true)
+              this.shadow.querySelector("trigger").innerHTML = `<button><x-icon color="ffffff">${this.getAttribute("value")}</x-icon></button>`;
+
+            else
+              this.shadow.querySelector("trigger").innerHTML = `<x-icon color="ffffff">${this.getAttribute("value")}</x-icon>`;
+
+          }
 
 
-          else if(this.getAttribute("type") === "text")
-            this.shadow.querySelector("trigger").innerHTML = `<button>${this.getAttribute("value")}</button>`;
+          else if(this.getAttribute("type") === "text"){
+            if(this.hasAttribute("button") === true)
+              this.shadow.querySelector("trigger").innerHTML = `<button>${this.getAttribute("value")}</button>`;
+
+            else
+              this.shadow.querySelector("trigger").innerHTML = `${this.getAttribute("value")}`;
+
+          }
+
+        }
 
 
       // Show On Click trigger
