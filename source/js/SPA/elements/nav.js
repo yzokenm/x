@@ -28,13 +28,24 @@ export default class Nav extends HTMLElement{
         // Make scrollable on x axis when the media condition matches
         this.#ifMobileMakeScrollable();
         window.matchMedia(`(max-width: ${window.CSS.getValue("--screen-size-phone")})`).onchange = this.#ifMobileMakeScrollable;
-
         BuildButtons: {
             this.buttonsHTML = "";
             this.buttons = JSON.parse(this.JSON).constructor === Array ? JSON.parse(this.JSON) : [];
 
             for(const button of this.buttons)
-                this.buttonsHTML += `<a href="#${button.link}">${window.Lang.use("name" in button ? button.name : button.link)}</a>`;
+              this.buttonsHTML += `
+                <section>
+
+                  <section class="parentNav">
+                    <a href="#${button.link}">${window.Lang.use("name" in button ? button.name : button.link)}</a>
+                    <x-icon for="toggleSubNav" color="#ffffff" name="arrow_bottom_small"></x-icon>
+                  </section>
+
+                  <section class="subNav">${"link" in button ? button.link : ""}</section>
+
+                </section>
+
+              `;
 
             // Placing the buttons/links
             this.querySelector("nav").innerHTML = this.buttonsHTML;
@@ -48,6 +59,8 @@ export default class Nav extends HTMLElement{
             // On Hash Change Trigger
             window.onhashchange = this.#setActive;
         }
+
+        this.#showSubNav();
 
     }
 
@@ -81,6 +94,29 @@ export default class Nav extends HTMLElement{
 
 
     };
+   
+
+    // On Click Sub Nav Trigger Icon Extend The Nav
+  #showSubNav(){
+    const subNavTogglers = this.querySelectorAll("nav x-icon");
+    for(const toggler of subNavTogglers)
+      toggler.onclick = ()=> {
+        toggler.classList.toggle("open");
+        toggler.parentElement.parentElement.querySelector("section.subNav").classList.toggle("show");
+      }
+
+
+  }
+
+  // Sub Nav HTML Builder
+  #subNavBuilder(subNavs){
+    console.log(subNavs);
+    let subNavsHtml = "";
+    // for(const subNav of subNavs)
+    //   subNavsHtml += `<a href="">${window.Lang.use(subNav["name"])}</a>`;
+
+    // return subMenusHtml;
+  }
 
     connectedCallback(){
         // CSS Rules For Child Elements Animation
