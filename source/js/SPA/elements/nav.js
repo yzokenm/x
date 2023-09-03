@@ -38,10 +38,10 @@ export default class Nav extends HTMLElement{
 
                   <section class="parentNav">
                     <a href="#${button.link}">${window.Lang.use("name" in button ? button.name : button.link)}</a>
-                    <x-icon for="toggleSubNav" color="#ffffff" name="arrow_bottom_small"></x-icon>
+                    ${"subNav" in button ? `<x-icon for="toggleSubNav" color="#ffffff" name="arrow_bottom_small"></x-icon>` : ""}
                   </section>
 
-                  <section class="subNav">${"link" in button ? button.link : ""}</section>
+                  <section class="subNav">${"subNav" in button ? this.#subNavBuilder(button["subNav"]) : ""}</section>
 
                 </section>
 
@@ -110,12 +110,11 @@ export default class Nav extends HTMLElement{
 
   // Sub Nav HTML Builder
   #subNavBuilder(subNavs){
-    console.log(subNavs);
     let subNavsHtml = "";
-    // for(const subNav of subNavs)
-    //   subNavsHtml += `<a href="">${window.Lang.use(subNav["name"])}</a>`;
+    for(const subNav of subNavs)
+      subNavsHtml += `<a href="#${subNav["link"]}">${subNav["link"]}</a>`;
 
-    // return subMenusHtml;
+    return subNavsHtml;
   }
 
     connectedCallback(){
