@@ -37,8 +37,10 @@ export default class Menu{
 
     // Listen To The Events
     Menu.#onClickMenuButtonShow();
+    Menu.#onClickMenuButtonHide();
     Menu.#onClickCoverHide();
     Menu.#toggleAlwaysOpenMode();
+
   }
 
   /////////////////// Create Menu | Re-Build
@@ -127,6 +129,11 @@ export default class Menu{
   // On Click Menu Button Show The Menu
   static #onClickMenuButtonShow(){
     document.querySelector(Menu.#selectorMenuButton).onclick = Menu.#show;
+  }
+
+  // On Click Menu Button Hide In Mobile
+  static #onClickMenuButtonHide(){
+    document.querySelector(`${Menu.selector} > header > x-icon[for=x]`).onclick = Menu.#hide;
   }
 
   // On Click Cover Hide

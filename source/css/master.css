@@ -270,12 +270,23 @@ body{
 
     & > footer{}
 
+    @media only screen and (min-width: 992px){
+      & > header{
+        & > x-icon[for=x]{
+          display: none;
+        }
+      }
+    }
+
     @media only screen and (max-width: 600px){
       width: 100vw;
 
       & > header{
         & > x-icon[for=toggleAlwaysOpenMode]{
           display: none;
+        }
+        & > x-icon[for=x]{
+          display: block;
         }
       }
     }
