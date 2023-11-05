@@ -37,7 +37,7 @@ export default class Menu{
 
     // Listen To The Events
     Menu.#onClickMenuButtonShow();
-    Menu.#onClickMenuButtonHide();
+    Menu.#onClickMenuCloseButton();
     Menu.#onClickCoverHide();
     Menu.#toggleAlwaysOpenMode();
 
@@ -132,7 +132,7 @@ export default class Menu{
   }
 
   // On Click Menu Button Hide In Mobile
-  static #onClickMenuButtonHide(){
+  static #onClickMenuCloseButton(){
     document.querySelector(`${Menu.selector} > header > x-icon[for=x]`).onclick = Menu.#hide;
   }
 

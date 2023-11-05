@@ -96,6 +96,11 @@ x-nav{
   & > nav{
     height: var(--height);
 
+    & > div.toggle-nav{
+      display: none;
+    }
+
+    /* transition: 500ms ease-in-out; */
     /* Removing the firts padding left on divs */
     & > div{
       padding-left: var(--padding) !important;
@@ -156,6 +161,7 @@ x-nav{
       }
     }
   }
+
 }
 
 x-modal{
@@ -283,19 +289,17 @@ x-tooltip{
 
 @media only screen and (max-width: 600px){
   x-nav{
-    position: fixed;
-    z-index: var(--z-nav);
-    top: calc(var(--header-height) + var(--padding));
-
+    padding-top: 30px;
     & > nav{
-      max-width: calc(100vw - var(--padding) * 2);
+      /* height: calc(var(--height) - var(--header-height) - var(--footer-height)) !important;
+      position: fixed;
+      top: 0; */
 
-      flex-direction: row;
-      gap: calc(var(--gap) / 4);
-
-      & > a{
-        box-shadow: none !important;
+      & > div.toggle-nav{
+        display: flex;
+        justify-content: space-between;
       }
+ 
     }
   }
 }

@@ -133,6 +133,10 @@ body{
       flex-direction: row;
       justify-content: space-between;
 
+      & > x-icon[for=x]{
+        display: none;
+      }
+
     }
 
     & > main{
@@ -270,14 +274,6 @@ body{
 
     & > footer{}
 
-    @media only screen and (min-width: 992px){
-      & > header{
-        & > x-icon[for=x]{
-          display: none;
-        }
-      }
-    }
-
     @media only screen and (max-width: 600px){
       width: 100vw;
 
@@ -285,6 +281,7 @@ body{
         & > x-icon[for=toggleAlwaysOpenMode]{
           display: none;
         }
+        
         & > x-icon[for=x]{
           display: block;
         }

@@ -20,11 +20,18 @@ export default class Nav extends HTMLElement{
         BuildHTML: {
           this.HTML = "";
           this.JSON = JSON.parse(this.JSON).constructor === Array ? JSON.parse(this.JSON) : [];
-
+          
           this.#buildNavs(this.JSON);
-
+          
           // Placing the buttons/links
-          this.querySelector("nav").innerHTML = this.HTML;
+          this.querySelector("nav").innerHTML = `<section class="test">${this.HTML}</section>`;
+          this.querySelector("nav").innerHTML += `
+            <div class="toggle-nav radius-default surface-2D">
+              <span>Path</span>
+              <x-icon for="toggleNav" name="menu" toggle="x"></x-icon>
+            </div>
+          `;
+          
         }
 
 
@@ -39,7 +46,9 @@ export default class Nav extends HTMLElement{
           // On Hash Change Trigger
           window.onhashchange = this.#setActive;
 
+          this.#toggleNav();
           this.#toggleSubNav();
+
         }
     }
 
@@ -72,6 +81,15 @@ export default class Nav extends HTMLElement{
       else this.querySelector("nav").classList.remove("scrollbar-x");
     }
 
+    #toggleNav =()=> {
+      let isNavVisible = false;
+      this.querySelector("x-icon[for=toggleNav]").onclick=()=> {
+        isNavVisible = !isNavVisible;
+        this.querySelector("section.test").style.display = isNavVisible ? "block" : "none";
+      }
+
+    }
+
     #toggleSubNav = ()=>{
       const subNavTogglers = this.querySelectorAll("x-icon[for=toggleSubNav]");
 
@@ -85,7 +103,13 @@ export default class Nav extends HTMLElement{
     #setActive = ()=>{
         let isHashValid = false;
         const hyperlinks = this.querySelector("nav").getElementsByTagName("a");
-
+        for(const a of hyperlinks){
+          a.addEventListener("click", ()=> {
+            this.querySelector("section.test").style.display = "none";
+            // this.querySelector("span").innerHTML = `${link.getAttribute("href").slice(1)}`;
+            // this.querySelector("x-icon[for=toggleNav]").setAttribute("toggle", "menu")
+          })
+        }
         for(const a of hyperlinks)
           if(a.getAttribute("href") === window.location.hash){
             a.classList.add("active");
